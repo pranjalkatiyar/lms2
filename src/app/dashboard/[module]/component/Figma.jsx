@@ -47,7 +47,7 @@ export default function FigmaComponent() {
       <main className="flex-grow p-4">
         <div className="w-full h-[calc(100vh-50px)] bg-gray-100 rounded-lg overflow-hidden">
           <iframe
-            src="https://embed.figma.com/proto/qTZKW1GGYoqHQwZmOLz1be/SimVizLabs-LMS?node-id=87-948&node-type=frame&scaling=max-zoom&content-scaling=fixed&page-id=87%3A947&starting-point-node-id=87%3A948&share=1&embed-host=share"
+            src="https://embed.figma.com/design/kP4gWbDaYzoR9eNd8I9S3b/FMC-APP?node-id=38-2553&embed-host=share"
             className="w-full h-full"
             allowFullScreen
           />
