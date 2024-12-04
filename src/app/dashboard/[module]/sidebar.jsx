@@ -1,5 +1,6 @@
 "use client";
 import * as React from "react";
+import logo from "/assets/logo.svg";
 import {
   BadgeCheck,
   Bell,
@@ -51,7 +52,7 @@ import {
 import { redirect } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useSearchParams } from "next/navigation.js";
-
+import Image from "next/image.js";
 export const data = {
   modules: [
     {
@@ -357,6 +358,14 @@ export default function ModuleSidebar({ children }) {
   return (
     <SidebarProvider>
       <Sidebar variant="inset">
+        <SidebarHeader>
+          <SidebarMenuButton
+            className="w-fit px-1.5"
+            onClick={() => redirect("/dashboard")}
+          >
+            <Image src="/assets/logo.svg" alt="Logo" width={35} height={35} />
+          </SidebarMenuButton>
+        </SidebarHeader>
         <SidebarContent>
           <SidebarGroup>
             <SidebarGroupLabel>Platform</SidebarGroupLabel>

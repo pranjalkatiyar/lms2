@@ -48,7 +48,7 @@ export default function Page() {
               </div>
               <div>
                 <p className="font-extralight text-gray-500">
-                  SPARTAN COLLEG'S FLIGHT SCHOOL
+                Spartan College of Aeronautics and Technology
                 </p>
               </div>
             </div>
