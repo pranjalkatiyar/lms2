@@ -1,9 +1,10 @@
 import Image from "next/image";
 import { redirect, usePathname, useSearchParams } from "next/navigation";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { data as moduleData } from "../dashboard/[module]/sidebar";
+import { data as moduleData } from "../dashboard/[courses]/[module]/sidebar";
 import { ChevronLeft } from "lucide-react";
 import { ChevronRight } from "lucide-react";
+// import Exercise from "../dashboard/[courses]/[module]/exercise/page";
 
 // interface ArticleProps {
 //   article: {
@@ -26,10 +27,17 @@ export default function Article({ article }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const pathArray = pathname.split("/");
-  const module = moduleData.modules.find((item) => item.id == pathArray[2]);
+  console.log(pathArray);
+  // moduledata taken from sidebar data
+  const filteredModuleData = moduleData.courses.filter((item) =>
+    pathname.includes(item.subpath)
+  );
+  const module = filteredModuleData[0].modules.find(
+    (item) => item.id == pathArray[3]
+  );
   const articleSubId = searchParams.get("id");
   const subsection = module.subsections.find((sub) =>
-    articleSubId ? sub.subid == articleSubId : sub.id === pathArray[3]
+    articleSubId ? sub.subid == articleSubId : sub.id === pathArray[4]
   );
 
   return (
@@ -43,14 +51,22 @@ export default function Article({ article }) {
               <button
                 className="mr-0.5 border hover:bg-gray-300 text-black font-bold py-1.5 px-6 rounded-lg disabled:text-gray-300 disabled:hover:bg-white"
                 disabled={!subsection.prevPath}
-                onClick={() => redirect(`/dashboard${subsection.prevPath}`)}
+                onClick={() =>
+                  redirect(
+                    `${filteredModuleData[0].subpath}/${subsection.prevPath}`
+                  )
+                }
               >
                 BACK
               </button>
               <button
                 className="ml-0.5 border bg-blue-700 text-white font-bold py-1.5 px-6 rounded-lg"
                 disabled={!subsection.nextPath}
-                onClick={() => redirect(`/dashboard${subsection.nextPath}`)}
+                onClick={() =>
+                  redirect(
+                    `${filteredModuleData[0].subpath}/${subsection.nextPath}`
+                  )
+                }
               >
                 NEXT
               </button>
@@ -83,15 +99,29 @@ export default function Article({ article }) {
               );
             case "image":
               return (
-                <figure key={index} className="my-8">
+                <figure key={index} className="my-8 flex justify-center">
                   <Image
                     src={item.content}
                     alt="Article image"
-                    width={800}
-                    height={400}
-                    className="rounded-lg w-full"
+                    width={1080}
+                    height={1080}
+                    objectFit="cover"
+                    className="rounded-lg w-[60%] "
                   />
                 </figure>
+              );
+            case "html":
+              return (
+                <div>
+                  <div dangerouslySetInnerHTML={{ __html: item.content }} />
+                </div>
+              );
+            case "table":
+              return (
+                <div className="flex flex-row gap-3">
+                  <div className="text-nowrap">{item.content.left}</div>
+                  <div>{item.content.right}</div>
+                </div>
               );
             default:
               return null;

@@ -8,17 +8,17 @@ import {
 } from "@/components/ui/sidebar";
 import { Plane, Youtube } from "lucide-react";
 import Image from "next/image";
-import data from "./data";
-import ResponsiveCard from "./ResponsiveCard";
+import data from "../data";
+import ResponsiveCard from "../ResponsiveCard";
 import { Progress } from "@/components/ui/progress";
 import { FileText } from "lucide-react";
 import { FileQuestion } from "lucide-react";
 import { useEffect, useState } from "react";
-import { redirect } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 
 export default function Page() {
   const [isClient, setIsClient] = useState(false);
-
+  const pathname = usePathname();
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -26,6 +26,10 @@ export default function Page() {
   if (!isClient) {
     return null;
   }
+
+  const filteredData = data.filter((item) =>
+    pathname.includes(item.path)
+  );
 
   return (
     <SidebarProvider>
@@ -47,8 +51,8 @@ export default function Page() {
                 <h3 className="text-3xl flex">Hello Olivia</h3>
               </div>
               <div>
-                <p className="font-extralight text-gray-500">
-                Spartan College of Aeronautics and Technology
+                <p className="font-extralight text-gray-500 uppercase">
+                  Spartan College of Aeronautics and Technology
                 </p>
               </div>
             </div>
@@ -68,7 +72,7 @@ export default function Page() {
               <div className="absolute top-0 left-0 right-0 bottom-0 flex flex-col items-start justify-center text-white p-4">
                 <p>COURSE</p>
                 <h1 className="text-left text-2xl md:text-xl sm:text-lg font-bold">
-                  Introduction to FMS (Flight Management System) and Autoflight
+                  {filteredData[0].full_heading}
                 </h1>
                 <div className="flex items-center space-x-2 mt-2">
                   <Image
@@ -182,7 +186,7 @@ export default function Page() {
             </div>
             {/*  modules */}
             <div className=" flex flex-col gap-4">
-              {data.map((item, index) => {
+              {filteredData[0].modules.map((item, index) => {
                 return (
                   <div key={index}>
                     <h1 className="font-bold uppercase my-2 text-[#344054] opacity-50">
@@ -191,7 +195,7 @@ export default function Page() {
                     <strong className="font-bold text-2xl text-[#344054]">
                       {item.heading}
                     </strong>
-                    <ResponsiveCard details={item} />
+                    <ResponsiveCard details={item} path={filteredData[0].path} />
                   </div>
                 );
               })}

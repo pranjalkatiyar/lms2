@@ -13,12 +13,15 @@ export default function TestPlayer() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const pathArray = pathname.split("/");
-  const module = moduleData.modules.find(
-    (item) => item.id == pathArray[2]
+  const filteredModuleData = moduleData.courses.filter((item) =>
+    pathname.includes(item.subpath)
+  );
+  const module = filteredModuleData[0].modules.find(
+    (item) => item.id == pathArray[3]
   );
   const articleSubId = searchParams.get("id");
   const subsection = module.subsections.find((sub) =>
-    articleSubId ? sub.subid == articleSubId : sub.id === pathArray[3]
+    articleSubId ? sub.subid == articleSubId : sub.id === pathArray[4]
   );
 
   return (
@@ -32,14 +35,22 @@ export default function TestPlayer() {
               <button
                 className="mr-0.5 border hover:bg-gray-300 text-black font-bold py-1.5 px-6 rounded-lg disabled:text-gray-300 disabled:hover:bg-white"
                 disabled={!subsection.prevPath}
-                onClick={() => redirect(`/dashboard${subsection.prevPath}`)}
+                onClick={() =>
+                  redirect(
+                    `${filteredModuleData[0].subpath}/${subsection.prevPath}`
+                  )
+                }
               >
                 BACK
               </button>
               <button
                 className="ml-0.5 border bg-blue-700 text-white font-bold py-1.5 px-6 rounded-lg"
                 disabled={!subsection.nextPath}
-                onClick={() => redirect(`/dashboard${subsection.nextPath}`)}
+                onClick={() =>
+                  redirect(
+                    `${filteredModuleData[0].subpath}/${subsection.nextPath}`
+                  )
+                }
               >
                 NEXT
               </button>
@@ -50,15 +61,15 @@ export default function TestPlayer() {
       <hr className="mb-5" />
       <div className="w-full text-center flex justify-center">
         <div className="w-full justify-center flex flex-col lg:relative lg:left-2 ">
-        <div className="text-start py-4 font-semibold text-xl">
-          <div>What is FMS?</div>
-        </div>
+          <div className="text-start py-4 font-semibold text-xl">
+            <div>Video Lesson</div>
+          </div>
           <Player
-            // className="justify-start h-2/5 rounded-xl w-full"
+            className="justify-start rounded-xl w-full"
             src={
               "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
             }
-            poster="https://img.freepik.com/free-photo/painting-mountain-lake-with-mountain-background_188544-9126.jpg"
+            poster="/course/airbus_a320/videoPlayerImage.png"
             blurDataURL="https://img.freepik.com/free-photo/painting-mountain-lake-with-mountain-background_188544-9126.jpg"
           />
         </div>

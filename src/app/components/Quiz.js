@@ -18,7 +18,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { ChevronLeft } from "lucide-react";
 import { ChevronRight } from "lucide-react";
 
-import { data as moduleData } from "../dashboard/[module]/sidebar";
+import { data as moduleData } from "../dashboard/[courses]/[module]/sidebar";
 import { redirect } from "next/navigation";
 
 const questions = [
@@ -111,16 +111,17 @@ export default function QuizComponent() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const pathArray = pathname.split("/");
-  const module = moduleData.modules.find((item) => item.id == pathArray[2]);
+  const filteredModuleData=moduleData.courses.filter((item)=>pathname.includes(item.subpath));
+  const module = filteredModuleData[0].modules.find((item) => item.id == pathArray[3]);
+  // const module = moduleData.modules.find((item) => item.id == pathArray[2]);
   const articleSubId = searchParams.get("id");
   const subsection = module.subsections.find((sub) =>
-    articleSubId ? sub.subid == articleSubId : sub.id === pathArray[3]
+    articleSubId ? sub.subid == articleSubId : sub.id === pathArray[4]
   );
-  const [startedQuiz, setStartedQuiz] = useState(false)
-  
+  const [startedQuiz, setStartedQuiz] = useState(false);
 
   return (
-    <div className="min-h-screen  dark:bg-gray-950">
+    <div className="min-h-screen  w-full dark:bg-gray-950">
       <Card className="w-full rounded-xl border-none shadow-none  mx-auto dark:bg-gray-900">
         <CardHeader className="bg-white rounded-t-xl text-black">
           <CardTitle className="text-2xl font-bold flex flex-col justify-between">
@@ -131,23 +132,25 @@ export default function QuizComponent() {
                 <div className="flex justify-between w-full">
                   <h1 className="text-4xl font-bold my-2">{module.title}</h1>
                   <div>
-                    {startedQuiz ? !submitted ? (
-                      <Button
-                        onClick={handleSubmit}
-                        disabled={answers.some((a) => a === "")}
-                        className="w-full"
-                      >
-                        Submit
-                      </Button>
-                    ) : (
-                      <>
-                        <div className="text-lg font-semibold text-gray-800 dark:text-gray-200">
-                          Your score: {score} out of {questions.length}
-                        </div>
-                        <Button onClick={handleReset} variant="outline">
-                          Try Again
+                    {startedQuiz ? (
+                      !submitted ? (
+                        <Button
+                          onClick={handleSubmit}
+                          disabled={answers.some((a) => a === "")}
+                          className="w-full"
+                        >
+                          Submit
                         </Button>
-                      </>
+                      ) : (
+                        <>
+                          <div className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                            Your score: {score} out of {questions.length}
+                          </div>
+                          <Button onClick={handleReset} variant="outline">
+                            Try Again
+                          </Button>
+                        </>
+                      )
                     ) : null}
                   </div>
                 </div>
@@ -231,10 +234,17 @@ export default function QuizComponent() {
             ))}
           </CardContent>
         ) : (
-          <CardContent className='flex h-[60vh] w-full items-center justify-center text-center'>
+          <CardContent className="flex h-[60vh] w-full items-center justify-center text-center">
             <div>
-              <div className="text-2xl font-medium py-6">Do you want to start the quiz?</div>
-              <button className="bg-blue-900 text-white px-8 py-2.5 rounded-lg" onClick={()=> setStartedQuiz(true)}>START QUIZ</button>
+              <div className="text-2xl font-medium py-6">
+                Do you want to start the quiz?
+              </div>
+              <button
+                className="bg-blue-900 text-white px-8 py-2.5 rounded-lg"
+                onClick={() => setStartedQuiz(true)}
+              >
+                START QUIZ
+              </button>
             </div>
           </CardContent>
         )}

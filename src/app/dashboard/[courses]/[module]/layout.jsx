@@ -6,21 +6,13 @@ import ModuleSidebar from "./sidebar";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata = {
-  title: "Your App Name",
-  description: "Description of your application",
-};
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body>
-        <div className="flex h-screen">
+        <div className="flex h-screen w-screen">
           <ModuleSidebar>
           {children}
           </ModuleSidebar>
         </div>
-      </body>
-    </html>
   );
 }

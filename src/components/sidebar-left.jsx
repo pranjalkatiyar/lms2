@@ -52,7 +52,7 @@ const data = {
   navMain: [
     {
       title: "Home",
-      url: "/dashboard",
+      url: "/home",
       icon: "/assets/home.svg",
       isActive: true,
     },
