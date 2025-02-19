@@ -83,10 +83,10 @@ export default function HomePage() {
             />
             <div className="mt-4">
               <div>
-                <h3 className="text-3xl flex">Welcome to SimVizLabs</h3>
+                <h3 className="md:text-xl lg:text-3xl flex">Welcome to SimVizLabs</h3>
               </div>
               <div>
-                <p className="font-extralight text-gray-500 uppercase">
+                <p className="font-extralight sm:text-md lg:text-lg text-gray-500 uppercase">
                 Spartan College of Aeronautics and Technology
                 </p>
               </div>
@@ -97,11 +97,11 @@ export default function HomePage() {
         <div className="p-6 grid gap-6">
           <section>
             <h2 className="text-2xl font-bold mb-4">Your Courses</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
               {courses?.map((course, index) => (
                 <Card
                   key={index}
-                  className="p-6 hover:shadow-lg transition-shadow cursor-pointer border border-gray-100"
+                  className="p-6 hover:shadow-lg transition-shadow cursor-pointer border min-w-[200px] border-gray-100"
                 >
                   <div className="flex items-center gap-4 mb-4">
                     <Image
