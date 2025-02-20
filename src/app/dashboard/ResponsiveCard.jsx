@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import * as React from "react";
 import { Check } from "lucide-react";
 
@@ -9,7 +9,7 @@ import { FileQuestion } from "lucide-react";
 import { redirect } from "next/navigation";
 import Image from "next/image";
 
-export default function ResponsiveCard({ details,path }) {
+export default function ResponsiveCard({ details, path }) {
   return (
     <Card
       className="w-full overflow-hidden mt-3 cursor-pointer"
@@ -20,9 +20,11 @@ export default function ResponsiveCard({ details,path }) {
       <div className="flex flex-col sm:flex-row">
         {/* Left side - Image (30% width on larger screens) */}
         <div className="w-full sm:w-[20%] sm:h-fit md:h-auto">
-          <img
-            src="/contentSidePosterLeft.svg"
+          <Image
+            src="/contentSidePosterLeft.png"
             alt="Card image"
+            width={1080}
+            height={1080}
             className="w-full h-full object-contain"
           />
         </div>
@@ -74,7 +76,9 @@ export default function ResponsiveCard({ details,path }) {
               </div>
             </div>
             <div className="flex  justify-center text-white">
-              {details.completed && <Check className="w-5 h-5 bg-green-500 rounded-full" />}
+              {details.completed && (
+                <Check className="w-5 h-5 bg-green-500 rounded-full" />
+              )}
             </div>
           </div>
         </div>

@@ -35,7 +35,7 @@ export default function Page() {
     <SidebarProvider>
       <SidebarLeft />
       <SidebarInset className="py-4">
-        <div className="   top-0 flex h-14 shrink-0 items-center gap-2 bg-background">
+        <div className="top-0 flex h-14 shrink-0 items-center gap-2 bg-background">
           <div className="flex flex-1 items-center gap-2 px-3">
             <SidebarTrigger />
             <Separator orientation="vertical" className="mr-2 h-4" />
@@ -46,7 +46,7 @@ export default function Page() {
               height={45}
               className="pt-4"
             />
-            <div className="mt-4 ">
+            <div className="mt-4">
               <div>
                 <h3 className="text-3xl flex">Hello Olivia</h3>
               </div>
@@ -59,17 +59,17 @@ export default function Page() {
           </div>
         </div>
 
-        <div className="flex flex-1 flex-col gap-4 p-4">
+        <div className="flex flex-1 mt-2 flex-col gap-4 p-4">
           {/* course details */}
-          <div className="mx-auto  h-32 w-full rounded-xl bg-muted/50">
-            <div className="relative bg-red h-[30vh]">
+          <div className="mx-auto h-32 w-full rounded-xl">
+            <div className="absolute w-[97%]">
               <Image
                 src={"/MainBackground.svg"}
                 alt="Background"
-                className="w-full object-cover rounded-t-xl"
+                className="w-full object-cover rounded-xl"
                 layout="fill"
               />
-              <div className="absolute top-0 left-0 right-0 bottom-0 flex flex-col items-start justify-center text-white p-4">
+              <div className="relative top-0 left-0 right-0 bottom-0 flex flex-col items-start justify-center text-white p-4">
                 <p>COURSE</p>
                 <h1 className="text-left text-2xl md:text-xl sm:text-lg font-bold">
                   {filteredData[0].full_heading}
@@ -84,9 +84,9 @@ export default function Page() {
                   />
                   <span>SimVizLabs LLC</span>
                 </div>
-                <div className="flex flex-row space-x-4 justify-between w-full mt-4 md:text-sm">
-                  <div className="flex flex-col w-[50%]">
-                    <div className="flex flex-row space-x-4 mt-4 w-[60%] justify-between">
+                <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 justify-between w-full mt-4 md:text-sm">
+                  <div className="flex flex-col w-full md:w-[50%]">
+                    <div className="flex flex-row space-x-4 mt-4 w-full md:w-[60%] justify-between">
                       <div className="flex items-center space-x-1">
                         <Image
                           src="/assets/lesson.svg"
@@ -132,7 +132,7 @@ export default function Page() {
                   </div>
                   <div className="flex item-baseline">
                     <button
-                      className="bg-blue-600 hover:bg-blue-800 text-white font-bold px-6 rounded-xl bg-opacity-80 h-[2.75rem] w-[12rem]"
+                      className="bg-blue-600 hover:bg-blue-800 text-white font-bold px-6 rounded-xl bg-opacity-80 h-[2.75rem] w-full md:w-[12rem]"
                       onClick={() => redirect("/dashboard/md1/videoplayer")}
                     >
                       <div className="opacity-100">RESUME COURSE</div>
@@ -143,7 +143,7 @@ export default function Page() {
             </div>
           </div>
 
-          <div className="mx-auto h-[100vh] top-24 relative w-full rounded-xl mt-10">
+          <div className="mx-auto h-auto md:h-[100vh] top-24 relative w-full rounded-xl mt-10">
             {/* course description */}
             <div className="mt-5 flex gap-y-5 flex-col">
               <div>
@@ -185,7 +185,7 @@ export default function Page() {
               </div>
             </div>
             {/*  modules */}
-            <div className=" flex flex-col gap-4">
+            <div className="flex flex-col gap-4">
               {filteredData[0].modules.map((item, index) => {
                 return (
                   <div key={index}>
@@ -203,7 +203,6 @@ export default function Page() {
           </div>
         </div>
       </SidebarInset>
-      {/* <SidebarRight /> */}
     </SidebarProvider>
   );
 }
