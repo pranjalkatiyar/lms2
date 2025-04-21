@@ -8,28 +8,44 @@ import {
 } from "@/components/ui/sidebar";
 import { Plane, Youtube } from "lucide-react";
 import Image from "next/image";
-import data from "../data";
+import React from "react";
+// import data from "../data";
 import ResponsiveCard from "../ResponsiveCard";
 import { Progress } from "@/components/ui/progress";
 import { FileText } from "lucide-react";
 import { FileQuestion } from "lucide-react";
 import { useEffect, useState } from "react";
 import { redirect, usePathname } from "next/navigation";
+import { useGetCourses } from "@/hooks/useCourses";
 
-export default function Page() {
+export default function Page({params}) {
   const [isClient, setIsClient] = useState(false);
-  const pathname = usePathname();
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+  const paramsHook = React.use(params);
 
-  if (!isClient) {
-    return null;
+  // console.log(params.courses);
+  // const pathname = usePathname();
+  // useEffect(() => {
+  //   setIsClient(true);
+  // }, []);
+
+  // if (!isClient) {
+  //   return null;
+  // }
+
+  const {data,isLoading,isError} = useGetCourses();
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isError) {
+    return <div>Error loading data</div>;
   }
 
   const filteredData = data.filter((item) =>
-    pathname.includes(item.path)
+   params.courses.includes(item.c_id)
   );
+
+  console.log("Filtered Data:", filteredData);
 
   return (
     <SidebarProvider>
@@ -195,7 +211,7 @@ export default function Page() {
                     <strong className="font-bold text-2xl text-[#344054]">
                       {item.heading}
                     </strong>
-                    <ResponsiveCard details={item} path={filteredData[0].path} />
+                    <ResponsiveCard details={item} path={paramsHook.courses} />
                   </div>
                 );
               })}

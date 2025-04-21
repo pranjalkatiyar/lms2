@@ -1,4 +1,4 @@
-import React from "react"
+import React from "react";
 
 import {
   SidebarGroup,
@@ -7,22 +7,25 @@ import {
   SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 import Image from "next/image";
+import { SignOutButton } from '@clerk/nextjs'
 
-export function NavSecondary({
-  items,
-  ...props
-}) {
+export function NavSecondary({ items, ...props }) {
   return (
-    (<SidebarGroup {...props}>
+    <SidebarGroup {...props}>
       <SidebarGroupContent>
         <SidebarMenu>
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton asChild>
                 <a href={item.url}>
-                  <Image src={item.icon} alt={item.title} width={20} height={20} />
+                  <Image
+                    src={item.icon}
+                    alt={item.title}
+                    width={20}
+                    height={20}
+                  />
                   <span>{item.title}</span>
                 </a>
               </SidebarMenuButton>
@@ -31,11 +34,18 @@ export function NavSecondary({
           ))}
           <hr />
           <div className="my-2 px-2 flex items-center gap-4 cursor-pointer">
-            <Image src="/assets/profile_icon.jpeg" alt="Logo" width={50} height={50} className="rounded-full" />
-            <span className="text-sm font-semibold text-gray-600">Olivia</span>
+            <Image
+              src="/assets/profile_icon.jpeg"
+              alt="Logo"
+              width={50}
+              height={50}
+              className="rounded-full"
+            />
+            {/* <span className="text-sm font-semibold text-gray-600">Olivia</span> */}
+            <SignOutButton/>
           </div>
         </SidebarMenu>
       </SidebarGroupContent>
-    </SidebarGroup>)
+    </SidebarGroup>
   );
 }

@@ -14,7 +14,7 @@ export default function ResponsiveCard({ details, path }) {
     <Card
       className="w-full overflow-hidden mt-3 cursor-pointer"
       onClick={() =>
-        redirect(`${path}/${details.id}/article?id=${details.entry}`)
+        redirect(`/dashboard/${path}/${details.id}/article?id=${details.entry}`)
       }
     >
       <div className="flex flex-col sm:flex-row">

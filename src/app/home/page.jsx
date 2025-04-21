@@ -11,6 +11,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useGetCourses } from "@/hooks/useCourses";
 
 const coursesData = [
   {
@@ -19,7 +20,7 @@ const coursesData = [
     currentModule: "FMS Operations",
     status: "Active",
     image: "/assets/logo.svg",
-    path:"/dashboard/general"
+    path: "/dashboard/general",
   },
   {
     title: "Boeing 737",
@@ -27,7 +28,7 @@ const coursesData = [
     currentModule: "FMS Operations",
     status: "Locked",
     image: "/assets/logo.svg",
-    path:"/dashboard/boeing_737"
+    path: "/dashboard/boeing_737",
   },
   {
     title: "Airbus A320",
@@ -35,7 +36,7 @@ const coursesData = [
     currentModule: "Introduction",
     status: "Active",
     image: "/assets/logo.svg",
-    path:"/dashboard/airbus_a320"
+    path: "/dashboard/airbus_a320",
   },
   {
     title: "Boeing 747",
@@ -43,7 +44,7 @@ const coursesData = [
     currentModule: "Introduction",
     status: "Locked",
     image: "/assets/logo.svg",
-    path:"/dashboard/boeing_747"
+    path: "/dashboard/boeing_747",
   },
 ];
 
@@ -57,14 +58,18 @@ export default function HomePage() {
   const router = useRouter();
   const [courses, setCourses] = useState([]);
 
-  useEffect(() => {
-    // Simulate loading courses data
-    setCourses(coursesData);
-  }, []);
+  const { data, isLoading, error } = useGetCourses({ limit: 10, page: 1 });
 
-  const handleContinueLearning = (path) => {
-    router.push(path);
-  };
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+
+  // useEffect(() => {
+  //   // Simulate loading courses data
+  //   setCourses(coursesData);
+  // }, []);
+
+  const handleContinueLearning = (courseId) => {
+    router.push(`/dashboard/${courseId}`);  };
 
   return (
     <SidebarProvider>
@@ -83,14 +88,30 @@ export default function HomePage() {
             />
             <div className="mt-4">
               <div>
-                <h3 className="md:text-xl lg:text-3xl flex">Welcome to SimVizLabs</h3>
+                <h3 className="md:text-xl lg:text-3xl flex">
+                  Welcome to SimVizLabs
+                </h3>
               </div>
               <div>
                 <p className="font-extralight sm:text-md lg:text-lg text-gray-500 uppercase">
-                Spartan College of Aeronautics and Technology
+                  Spartan College of Aeronautics and Technology
                 </p>
               </div>
             </div>
+            {/* <div className="flex justify-end gap-2">
+              <a
+                href="/sign-in"
+                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+              >
+                Login
+              </a>
+              <a
+                href="/sign-up"
+                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+              >
+                Signup
+              </a>
+            </div> */}
           </div>
         </div>
 
@@ -98,33 +119,32 @@ export default function HomePage() {
           <section>
             <h2 className="text-2xl font-bold mb-4">Your Courses</h2>
             <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-              {courses?.map((course, index) => (
+              {data?.map((course, index) => (
                 <Card
                   key={index}
                   className="p-6 hover:shadow-lg transition-shadow cursor-pointer border min-w-[200px] border-gray-100"
                 >
                   <div className="flex items-center gap-4 mb-4">
                     <Image
-                      src={course.image}
-                      alt={course.title}
+                      src={course.image?course.image:"/assets/logo.svg"}
+                      alt={course.short_heading}
                       width={40}
                       height={40}
                     />
                     <div className="flex-1">
-                      <h3 className="font-semibold text-lg">{course.title}</h3>
+                      <h3 className="font-semibold text-lg">{course.short_heading}</h3>
                       <span
                         className={`text-sm px-2 py-1 rounded-full inline-block mt-1 ${
-                          course.status === "Active"
-                            ? "bg-green-100 text-green-800"
+                          course.status === "Active" ? "bg-green-100 text-green-800"
                             : "bg-gray-100 text-gray-800"
                         }`}
                       >
-                        {course.status}
+                        {course.status?course.status:"Locked"}
                       </span>
                     </div>
                     <div className="text-right">
                       <div className="text-2xl font-bold text-blue-600">
-                        {course.progress}%
+                        {course.progress?course.progress:0}%
                       </div>
                       <div className="text-sm text-gray-500">Completed</div>
                     </div>
@@ -137,25 +157,27 @@ export default function HomePage() {
                           : "First Chapter:"}
                       </span>
                       <span className="font-medium">
-                        {course.currentModule}
+                        {course.currentModule? course.currentModule : "Locked"}
                       </span>
                     </div>
                     <div className="w-full bg-gray-100 rounded-full h-3">
                       <div
                         className="bg-blue-600 h-3 rounded-full transition-all duration-300"
-                        style={{ width: `${course.progress}%` }}
+                        style={{ width: `${course.progress?course.progress:0}%` }}
                       ></div>
                     </div>
                     <button
-                      onClick={()=>handleContinueLearning(course.path)}
+                      onClick={() => handleContinueLearning(course.c_id)}
                       className={`w-full py-3 px-4 rounded-xl text-white font-medium transition-colors duration-200 ${
-                        course.status === "Active"
-                          ? "bg-blue-600 hover:bg-blue-700 shadow-md hover:shadow-lg"
-                          : "bg-gray-400 cursor-not-allowed"
-                      }`}
-                      disabled={course.status !== "Active"}
+                        // course.status === "Active"
+                          // ?
+                           "bg-blue-600 hover:bg-blue-700 shadow-md hover:shadow-lg"
+                          // : "bg-gray-400 cursor-not-allowed"
+                      }s
+                          `}
+                      // disabled={course.status !== "Active"}
                     >
-                      {course.status === "Active"
+                      {course.status !== "Active"
                         ? "Continue Learning"
                         : "Coming Soon"}
                     </button>

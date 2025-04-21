@@ -582,6 +582,8 @@ export default function ModuleSidebar({ children }) {
   console.log(pathname);
   const [filteredData, setFilteredData] = React.useState([]);
 
+  const {data,isLoading,isError}=useGetCourses()
+
   React.useEffect(() => {
     const filtered = data.courses.filter((course) =>
       pathname.includes(course.subpath)

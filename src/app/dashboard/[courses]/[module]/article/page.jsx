@@ -2,7 +2,8 @@
 import Article from "@/app/components/Article";
 import ModuleSidebar from "../sidebar";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useGetCourseDetails } from "@/hooks/useCourses";
 
 // In a real application, you would fetch this data from an API
 export const articleData = [
@@ -378,7 +379,6 @@ export const articleData = [
           },
         ],
       },
-
       {
         id: "4.0",
         title: "Diversions and Alternate Airports",
@@ -734,24 +734,28 @@ export const articleData = [
   },
 ];
 
-export default function Page() {
-  const params = useSearchParams();
-  const id = params.get("id");
-  const pathname = usePathname();
-  const [currentArticle, setCurrentArticle] = useState();
-  console.log(params, id, pathname);
-  useEffect(() => {
-    setCurrentArticle(() => {
-      const filteredArticleData = articleData.filter((article) =>
-        pathname.includes(article.course_article_subpath)
-      );
-      console.log("filtered", filteredArticleData);
-      const setdata = filteredArticleData[0]?.articles?.find(
-        (article) => article.id == id
-      );
-      return setdata;
-    });
-  }, [id]);
+export default function Page({params}) {
+  // const params = useSearchParams();
+  // const id = params.get("id");
+  // const pathname = usePathname();
+  // const [currentArticle, setCurrentArticle] = useState();
+  // console.log(params, id, pathname);
+
+  const {data,isLoading,isError}=useGetCourseDetails(React.use(params.courses));
+  console.log(data);
+
+  // useEffect(() => {
+  //   setCurrentArticle(() => {
+  //     const filteredArticleData = articleData.filter((article) =>
+  //       pathname.includes(article.course_article_subpath)
+  //     );
+  //     console.log("filtered", filteredArticleData);
+  //     const setdata = filteredArticleData[0]?.articles?.find(
+  //       (article) => article.id == id
+  //     );
+  //     return setdata;
+  //   });
+  // }, [id]);
 
   if (!currentArticle) {
     return <div>"loading"</div>;
