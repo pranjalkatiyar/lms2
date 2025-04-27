@@ -1,255 +1,176 @@
-"use client";
+'use client';
+import React, { useState } from 'react';
+import { useGetQuizQuestions, useGetQuizResults } from '@/hooks/useCourses';
 
-import { useState, useMemo } from "react";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { XCircle } from "lucide-react";
-import { CheckCircle } from "lucide-react";
-import { usePathname, useSearchParams } from "next/navigation";
-import { SidebarTrigger } from "@/components/ui/sidebar";
-import { ChevronLeft } from "lucide-react";
-import { ChevronRight } from "lucide-react";
+export default function QuizComponent({ data }) {
+  const [quizStarted, setQuizStarted] = useState(false);
+  const [selectedAnswers, setSelectedAnswers] = useState([]);
+  const [quizCompleted, setQuizCompleted] = useState(false);
 
-import { data as moduleData } from "../dashboard/[courses]/[module]/sidebar";
-import { redirect } from "next/navigation";
+  const { data: quizData, isLoading } = useGetQuizQuestions(data.quiz[0]);
 
-const questions = [
-  {
-    question: "What is the capital of France?",
-    options: ["London", "Berlin", "Paris", "Madrid"],
-    correctAnswer: "Paris",
-  },
-  {
-    question: "Which planet is known as the Red Planet?",
-    options: ["Mars", "Jupiter", "Venus", "Saturn"],
-    correctAnswer: "Mars",
-  },
-  {
-    question: "Who painted the Mona Lisa?",
-    options: [
-      "Vincent van Gogh",
-      "Leonardo da Vinci",
-      "Pablo Picasso",
-      "Michelangelo",
-    ],
-    correctAnswer: "Leonardo da Vinci",
-  },
-  {
-    question: "What is the largest ocean on Earth?",
-    options: [
-      "Atlantic Ocean",
-      "Indian Ocean",
-      "Arctic Ocean",
-      "Pacific Ocean",
-    ],
-    correctAnswer: "Pacific Ocean",
-  },
-  {
-    question: "Which element has the chemical symbol 'O'?",
-    options: ["Gold", "Oxygen", "Silver", "Iron"],
-    correctAnswer: "Oxygen",
-  },
-  {
-    question: "In which year did World War II end?",
-    options: ["1943", "1945", "1947", "1950"],
-    correctAnswer: "1945",
-  },
-  {
-    question: "What is the largest mammal in the world?",
-    options: ["African Elephant", "Blue Whale", "Giraffe", "Hippopotamus"],
-    correctAnswer: "Blue Whale",
-  },
-  {
-    question: "Who wrote 'Romeo and Juliet'?",
-    options: [
-      "Charles Dickens",
-      "William Shakespeare",
-      "Jane Austen",
-      "Mark Twain",
-    ],
-    correctAnswer: "William Shakespeare",
-  },
-  {
-    question: "What is the main ingredient in guacamole?",
-    options: ["Banana", "Avocado", "Apple", "Mango"],
-    correctAnswer: "Avocado",
-  },
-  {
-    question: "Which country is home to the kangaroo?",
-    options: ["New Zealand", "South Africa", "Australia", "Brazil"],
-    correctAnswer: "Australia",
-  },
-];
+  const {
+    mutate: submitAnswers,
+    isLoading: submitAnswersLoading,
+    data: submitAnswersData
+  } = useGetQuizResults();
 
-export default function QuizComponent() {
-  const [answers, setAnswers] = useState(new Array(questions.length).fill(""));
-  const [submitted, setSubmitted] = useState(false);
-
-  const score = useMemo(() => {
-    return answers.reduce((acc, answer, index) => {
-      return answer === questions[index].correctAnswer ? acc + 1 : acc;
-    }, 0);
-  }, [answers]);
-
-  const handleSubmit = () => {
-    setSubmitted(true);
+  const handleStartQuiz = () => {
+    setQuizStarted(true);
   };
 
-  const handleReset = () => {
-    setAnswers(new Array(questions.length).fill(""));
-    setSubmitted(false);
+  const handleAnswerSelect = (questionId, selectedOption) => {
+    if (quizCompleted) return;
+
+    setSelectedAnswers((prev) => {
+      const existing = prev.find((ans) => ans.questionId === questionId);
+      if (existing) {
+        return prev.map((ans) =>
+          ans.questionId === questionId ? { ...ans, selected: selectedOption } : ans
+        );
+      }
+      return [...prev, { questionId, selected: selectedOption }];
+    });
   };
 
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const pathArray = pathname.split("/");
-  const filteredModuleData=moduleData.courses.filter((item)=>pathname.includes(item.subpath));
-  const module = filteredModuleData[0].modules.find((item) => item.id == pathArray[3]);
-  // const module = moduleData.modules.find((item) => item.id == pathArray[2]);
-  const articleSubId = searchParams.get("id");
-  const subsection = module.subsections.find((sub) =>
-    articleSubId ? sub.subid == articleSubId : sub.id === pathArray[4]
-  );
-  const [startedQuiz, setStartedQuiz] = useState(false);
+  const calculateScore = () => {
+    submitAnswers(
+      {
+        quizId: data.quiz[0],
+        answers: selectedAnswers
+      },
+      {
+        onSuccess: () => {
+          setQuizCompleted(true);
+        },
+        onError: (err) => {
+          console.error("Quiz submission error:", err);
+        }
+      }
+    );
+  };
+
+  const getAnswerStatus = (questionId, option) => {
+    const result = submitAnswersData?.results?.find(q => q.questionId === questionId);
+    if (!result) return '';
+
+    if (result.selected === option && result.isCorrect) return 'bg-green-100 border-green-500';
+    if (result.selected === option && !result.isCorrect) return 'bg-red-100 border-red-500';
+    return '';
+  };
+
+  if (!quizStarted) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <h2 className="text-2xl font-bold mb-4">{data.title}</h2>
+        <button
+          onClick={handleStartQuiz}
+          className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+        >
+          Start Quiz
+        </button>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="text-xl">Loading questions...</div>
+      </div>
+    );
+  }
+
+  if (quizCompleted) {
+    return (
+      <div className="mx-auto p-6 w-full">
+        <h2 className="text-2xl font-bold mb-6">Quiz Completed!</h2>
+        <div className="text-xl mb-8">
+          Your Score: {submitAnswersData.scoreObtained} / {submitAnswersData.totalScore}
+        </div>
+
+        {submitAnswersData.results.map((q, index) => (
+          <div key={q.questionId} className="bg-white border rounded-lg p-6 mb-6 shadow">
+            <div className="text-lg font-semibold mb-3">
+              {index + 1}. {q.question}
+            </div>
+            <div className="space-y-2">
+              {quizData?.questions.find((qq) => qq.questionId === q.questionId)?.options.map((opt, idx) => (
+                <div
+                  key={idx}
+                  className={`p-3 border rounded-lg ${
+                    getAnswerStatus(q.questionId, opt)
+                  }`}
+                >
+                  {opt}
+                </div>
+              ))}
+            </div>
+            {!q.isCorrect && (
+              <div className="mt-3 text-sm text-gray-600">
+                ✅ Correct Answer: <span className="font-medium">{q.correctAnswer}</span>
+              </div>
+            )}
+          </div>
+        ))}
+
+        <button
+          onClick={() => {
+            setQuizStarted(false);
+            setSelectedAnswers([]);
+            setQuizCompleted(false);
+          }}
+          className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+        >
+          Restart Quiz
+        </button>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen  w-full dark:bg-gray-950">
-      <Card className="w-full rounded-xl border-none shadow-none  mx-auto dark:bg-gray-900">
-        <CardHeader className="bg-white rounded-t-xl text-black">
-          <CardTitle className="text-2xl font-bold flex flex-col justify-between">
-            <div>
-              {" "}
-              <div className="flex flex-row align-middle items-center">
-                <SidebarTrigger className="" />
-                <div className="flex justify-between w-full">
-                  <h1 className="text-4xl font-bold my-2">{module.title}</h1>
-                  <div>
-                    {startedQuiz ? (
-                      !submitted ? (
-                        <Button
-                          onClick={handleSubmit}
-                          disabled={answers.some((a) => a === "")}
-                          className="w-full"
-                        >
-                          Submit
-                        </Button>
-                      ) : (
-                        <>
-                          <div className="text-lg font-semibold text-gray-800 dark:text-gray-200">
-                            Your score: {score} out of {questions.length}
-                          </div>
-                          <Button onClick={handleReset} variant="outline">
-                            Try Again
-                          </Button>
-                        </>
-                      )
-                    ) : null}
-                  </div>
-                </div>
+    <div className="mx-auto p-6 w-full ">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">{quizData?.quizTitle}</h2>
+        <div className="text-lg font-medium">Total Score: {quizData?.totalScore}</div>
+      </div>
+
+      <div className="space-y-8">
+        {quizData?.questions.map((question, index) => (
+          <div key={question.questionId} className="bg-white rounded-lg p-6 ">
+            <div className="flex justify-between items-center mb-4">
+              <div className="text-lg font-semibold">
+                {index + 1}. {question.question}
               </div>
-              <hr className="my-2" />
+              <div className="text-sm text-gray-600">Score: {question.score}</div>
             </div>
-            <div className="flex flex-row justify-between">
-              <div>Quiz</div>
-            </div>
-          </CardTitle>
-        </CardHeader>
-        {startedQuiz ? (
-          <CardContent className="p-6">
-            {questions.map((q, index) => (
-              <div key={index} className="mb-8">
-                <h3 className="text-lg font-semibold mb-3 text-gray-800 dark:text-gray-200">
-                  {index + 1}. {q.question}
-                </h3>
-                <RadioGroup
-                  value={answers[index]}
-                  onValueChange={(value) => {
-                    const newAnswers = [...answers];
-                    newAnswers[index] = value;
-                    setAnswers(newAnswers);
-                  }}
-                  disabled={submitted}
-                  className="space-y-2"
+            <div className="space-y-2">
+              {question.options.map((option, optionIndex) => (
+                <div
+                  key={optionIndex}
+                  className={`p-3 border rounded-lg cursor-pointer transition-colors ${
+                    selectedAnswers.find(ans => ans.questionId === question.questionId)?.selected === option
+                      ? 'bg-blue-100 border-blue-500'
+                      : 'hover:bg-gray-50'
+                  }`}
+                  onClick={() => handleAnswerSelect(question.questionId, option)}
                 >
-                  {q.options.map((option, optionIndex) => (
-                    <div
-                      key={optionIndex}
-                      className={`flex items-center space-x-3 bg-white dark:bg-gray-800 rounded-lg p-3 shadow-sm transition-all ${
-                        answers[index] === option
-                          ? submitted
-                            ? option === q.correctAnswer
-                              ? "border-green-500 border-2 shadow-md"
-                              : "border-red-500 border-2 shadow-md"
-                            : "border-primary border-2 shadow-md"
-                          : "border border-gray-200 dark:border-gray-700"
-                      }`}
-                    >
-                      <RadioGroupItem
-                        value={option}
-                        id={`q${index}-option${optionIndex}`}
-                        className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
-                      />
-                      <Label
-                        htmlFor={`q${index}-option${optionIndex}`}
-                        className={`flex-grow cursor-pointer text-sm font-medium ${
-                          answers[index] === option
-                            ? submitted
-                              ? option === q.correctAnswer
-                                ? "text-green-600 dark:text-green-400"
-                                : "text-red-600 dark:text-red-400"
-                              : "text-primary dark:text-primary"
-                            : "text-gray-700 dark:text-gray-300"
-                        }`}
-                      >
-                        {option}
-                      </Label>
-                      {submitted && (
-                        <>
-                          {option === q.correctAnswer && (
-                            <CheckCircle className="w-5 h-5 text-green-500" />
-                          )}
-                          {answers[index] === option &&
-                            option !== q.correctAnswer && (
-                              <XCircle className="w-5 h-5 text-red-500" />
-                            )}
-                        </>
-                      )}
-                    </div>
-                  ))}
-                </RadioGroup>
-                {submitted && answers[index] !== q.correctAnswer && (
-                  <p className="mt-2 text-sm text-green-600 dark:text-green-400">
-                    Correct answer: {q.correctAnswer}
-                  </p>
-                )}
-              </div>
-            ))}
-          </CardContent>
-        ) : (
-          <CardContent className="flex h-[60vh] w-full items-center justify-center text-center">
-            <div>
-              <div className="text-2xl font-medium py-6">
-                Do you want to start the quiz?
-              </div>
-              <button
-                className="bg-blue-900 text-white px-8 py-2.5 rounded-lg"
-                onClick={() => setStartedQuiz(true)}
-              >
-                START QUIZ
-              </button>
+                  {option}
+                </div>
+              ))}
             </div>
-          </CardContent>
-        )}
-        {/* <CardFooter className="flex justify-between bg-gray-100 dark:bg-gray-800 p-6"></CardFooter> */}
-      </Card>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-8 flex justify-end">
+        <button
+          onClick={calculateScore}
+          className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+        >
+          Submit Quiz
+        </button>
+      </div>
     </div>
   );
 }

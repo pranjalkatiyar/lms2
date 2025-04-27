@@ -13,40 +13,40 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useGetCourses } from "@/hooks/useCourses";
 
-const coursesData = [
-  {
-    title: "Introduction to FMS",
-    progress: 65,
-    currentModule: "FMS Operations",
-    status: "Active",
-    image: "/assets/logo.svg",
-    path: "/dashboard/general",
-  },
-  {
-    title: "Boeing 737",
-    progress: 0,
-    currentModule: "FMS Operations",
-    status: "Locked",
-    image: "/assets/logo.svg",
-    path: "/dashboard/boeing_737",
-  },
-  {
-    title: "Airbus A320",
-    progress: 20,
-    currentModule: "Introduction",
-    status: "Active",
-    image: "/assets/logo.svg",
-    path: "/dashboard/airbus_a320",
-  },
-  {
-    title: "Boeing 747",
-    progress: 0,
-    currentModule: "Introduction",
-    status: "Locked",
-    image: "/assets/logo.svg",
-    path: "/dashboard/boeing_747",
-  },
-];
+// const coursesData = [
+//   {
+//     title: "Introduction to FMS",
+//     progress: 65,
+//     currentModule: "FMS Operations",
+//     status: "Active",
+//     image: "/assets/logo.svg",
+//     path: "/dashboard/general",
+//   },
+//   {
+//     title: "Boeing 737",
+//     progress: 0,
+//     currentModule: "FMS Operations",
+//     status: "Locked",
+//     image: "/assets/logo.svg",
+//     path: "/dashboard/boeing_737",
+//   },
+//   {
+//     title: "Airbus A320",
+//     progress: 20,
+//     currentModule: "Introduction",
+//     status: "Active",
+//     image: "/assets/logo.svg",
+//     path: "/dashboard/airbus_a320",
+//   },
+//   {
+//     title: "Boeing 747",
+//     progress: 0,
+//     currentModule: "Introduction",
+//     status: "Locked",
+//     image: "/assets/logo.svg",
+//     path: "/dashboard/boeing_747",
+//   },
+// ];
 
 const quickAccess = [
   { title: "FMS Simulator", icon: "/assets/live.svg" },

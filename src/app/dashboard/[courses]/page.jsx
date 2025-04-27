@@ -42,7 +42,7 @@ export default function Page({params}) {
   }
 
   const filteredData = data.filter((item) =>
-   params.courses.includes(item.c_id)
+   React.use(params).courses.includes(item.c_id)
   );
 
   console.log("Filtered Data:", filteredData);
@@ -167,37 +167,26 @@ export default function Page({params}) {
                   COURSE DESCRIPTION
                 </div>
                 <p>
-                  This course provides a foundational understanding of the
-                  Flight Management system (FMS) and its integration with modern
-                  Autoflight systems. It is designed for pilots who seek to
-                  advance their career in the airline industry. Airlines heavily
-                  rely on advanced systems for optimized flight operations, and
-                  airlines prioritize candidates who demonstrate strong
-                  technical knowledge and experience in these areas. This course
-                  will give you a competitive edge in airline hiring processes
-                  and prepare you for success in the world of commercial
-                  aviation.
+                  {filteredData[0].description}
                 </p>
               </div>
               <div>
                 <div className="mt-4 mb-2 font-semibold text-[#344054] opacity-50">
                   KEY TOPICS:
                 </div>
-                <ul className="mt-3">
-                  <li>- Overview of FMS and Autoflight components.</li>
-                  <li>
-                    - Understand relationship between FMS and Autoflight system
-                    and how they work together to execute precise and efficient
-                    flight, both in terminal and enroute environment.
-                  </li>
-                  <li>
-                    - Understanding FMC functions to include different databases
-                    and phases of flight.
-                  </li>
-                  <li>- Autoflight System modes and interaction.</li>
-                  <li>- Understand and implement LNAV and VNAV modes.</li>
-                  <li>- Understand and implement LNAV and VNAV modes.</li>
-                </ul>
+                {filteredData[0].keyTopics.listType === 'ul' ? (
+                  <ul className="ml-3 list-disc">
+                    {filteredData[0].keyTopics.content.map((item, index) => (
+                      <li key={index}>{item}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <ol className="mt-3">
+                    {filteredData[0].keyTopics.content.map((item, index) => (
+                      <li key={index}>{item}</li>
+                    ))}
+                  </ol>
+                )}
               </div>
             </div>
             {/*  modules */}

@@ -21,8 +21,9 @@ import {
   Trash2,
   Layers,
   Code,
+  ChevronDown,
 } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useIsMobile } from "./hooks/use-mobile.js";
 import {
   Collapsible,
@@ -52,7 +53,93 @@ import { redirect } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useSearchParams } from "next/navigation.js";
 import Image from "next/image.js";
+import { useGetCourseDetails, useGetCourses } from "@/hooks/useCourses.js";
 
+
+
+export const NestedSidebar = ({
+  courseDetails,
+  allCourseDetails,
+  activeId,
+  setActiveId,
+  pathname,
+  id,
+  courseId,
+  moduleId,
+}) => {
+  const [open, setOpen] = React.useState(false);
+  const router = useRouter();
+
+  if(courseDetails.module_id !== moduleId){
+    return null;
+  }
+
+  const children = allCourseDetails.filter(
+    (details) =>
+      details.parentId === courseDetails.id 
+  );
+  const isActive = activeId === courseDetails.id;
+  
+
+  const handleNavigate = () => {
+    setActiveId(courseDetails.id);
+    router.push(
+      `/dashboard/${courseId}/${courseDetails.module_id}/${courseDetails.doc_type || "article"}?id=${courseDetails.id}`
+    );
+  };
+
+  return (
+    <Collapsible  onClick={(e) => {
+      e.stopPropagation(); // stop from navigating
+      setOpen(!open);
+    }} open={open} onOpenChange={setOpen} className="pl-4" key={courseDetails.id+"-"+moduleId}>
+      <div
+        className={`flex items-center justify-between px-2 py-1 rounded-md cursor-pointer ${
+          isActive
+            ? "bg-muted font-semibold  bg-slate-200"
+            : "hover:bg-accent"
+        }`}
+      >
+        {/* Clicking this span navigates */}
+        <span
+          className="text-sm font-light w-full"
+          onClick={handleNavigate}
+        >
+          {courseDetails.title}
+        </span>
+
+        {/* Clicking chevron toggles children */}
+        {children.length > 0 && (
+          <ChevronDown
+            className={`ml-2 transition-transform ${
+              open ? "rotate-180" : ""
+            }`}
+            size={16}
+           
+          />
+        )}
+      </div>
+
+      {children.length > 0 && (
+        <CollapsibleContent className="space-y-1 mt-1">
+          {children.map((child) => (
+            <NestedSidebar
+              key={child.id}
+              courseDetails={child}
+              allCourseDetails={allCourseDetails}
+              activeId={activeId}
+              setActiveId={setActiveId}
+              pathname={pathname}
+              id={id}
+              courseId={courseId}
+              moduleId={moduleId}
+            />
+          ))}
+        </CollapsibleContent>
+      )}
+    </Collapsible>
+  );
+};
 // contains the linkage of all the paths
 export const data = {
   courses: [
@@ -66,18 +153,44 @@ export const data = {
           icon: Layers,
           subsections: [
             {
-              id: "article",
-              subid: "1.0",
+              id: "1.0",
               title: "Overview of FMS",
               path: "/md1/article?id=1.0",
               nextPath: "/md1/article?id=1.1",
             },
             {
-              id: "article",
-              subid: "1.1",
+              id: "1.0.1",
+              title: "Basic Concepts",
+              path: "/md1/article?id=1.0.1",
+              prevPath: "/md1/article?id=1.0",
+              nextPath: "/md1/article?id=1.0.2",
+            },
+            {
+              id: "1.0.1.1",
+              title: "Navigation Principles",
+              path: "/md1/article?id=1.0.1.1",
+              prevPath: "/md1/article?id=1.0.1",
+              nextPath: "/md1/article?id=1.0.1.2",
+            },
+            {
+              id: "1.0.1.2",
+              title: "System Architecture",
+              path: "/md1/article?id=1.0.1.2",
+              prevPath: "/md1/article?id=1.0.1.1",
+              nextPath: "/md1/article?id=1.0.2",
+            },
+            {
+              id: "1.0.2",
+              title: "Advanced Features",
+              path: "/md1/article?id=1.0.2",
+              prevPath: "/md1/article?id=1.0.1.2",
+              nextPath: "/md1/article?id=1.1",
+            },
+            {
+              id: "1.1",
               title: "FMC and ACARS Relationship",
               path: "/md1/article?id=1.1",
-              prevPath: "/md1/article?id=1.0",
+              prevPath: "/md1/article?id=1.0.2",
               nextPath: "/md1/videoplayer",
             },
             {
@@ -109,23 +222,48 @@ export const data = {
           icon: Layers,
           subsections: [
             {
-              id: "article",
-              subid: "2.0",
+              id: "2.0",
               title: "Setting Up the Preflight Phase",
               path: "/md2/article?id=2.0",
               nextPath: "/md2/article?id=2.1",
             },
             {
-              id: "article",
-              subid: "2.1",
+              id: "2.0.1",
+              title: "Route Planning",
+              path: "/md2/article?id=2.0.1",
+              prevPath: "/md2/article?id=2.0",
+              nextPath: "/md2/article?id=2.0.2",
+            },
+            {
+              id: "2.0.1.1",
+              title: "Waypoint Selection",
+              path: "/md2/article?id=2.0.1.1",
+              prevPath: "/md2/article?id=2.0.1",
+              nextPath: "/md2/article?id=2.0.1.2",
+            },
+            {
+              id: "2.0.1.2",
+              title: "Route Optimization",
+              path: "/md2/article?id=2.0.1.2",
+              prevPath: "/md2/article?id=2.0.1.1",
+              nextPath: "/md2/article?id=2.0.2",
+            },
+            {
+              id: "2.0.2",
+              title: "Weather Analysis",
+              path: "/md2/article?id=2.0.2",
+              prevPath: "/md2/article?id=2.0.1.2",
+              nextPath: "/md2/article?id=2.1",
+            },
+            {
+              id: "2.1",
               title: "Programming the Route",
               path: "/md2/article?id=2.1",
-              prevPath: "/md2/article?id=2.0",
+              prevPath: "/md2/article?id=2.0.2",
               nextPath: "/md2/article?id=2.2",
             },
             {
-              id: "article",
-              subid: "2.2",
+              id: "2.2",
               title: "Fuel and Weight Management",
               path: "/md2/article?id=2.2",
               prevPath: "/md2/article?id=2.1",
@@ -159,39 +297,34 @@ export const data = {
           icon: Layers,
           subsections: [
             {
-              id: "article",
-              subid: "3.0",
+              id: "3.0",
               title: "FPL page & LNAV/VNAV Exercises",
               path: "/md3/article?id=3.0",
               nextPath: "/md3/article?id=3.1",
             },
             {
-              id: "article",
-              subid: "3.1",
+              id: "3.1",
               title: "Real-Time Communication with ACARS",
               path: "/md3/article?id=3.1",
               prevPath: "/md3/article?id=3.0",
               nextPath: "/md3/article?id=3.2",
             },
             {
-              id: "article",
-              subid: "3.2",
+              id: "3.2",
               title: "Adjusting Flight Parameters",
               path: "/md3/article?id=3.2",
               prevPath: "/md3/article?id=3.1",
               nextPath: "/md3/article?id=3.3",
             },
             {
-              id: "article",
-              subid: "3.3",
+              id: "3.3",
               title: "RNP and RNAV in the 121 world",
               path: "/md3/article?id=3.3",
               prevPath: "/md3/article?id=3.2",
               nextPath: "/md3/article?id=3.4",
             },
             {
-              id: "article",
-              subid: "3.4",
+              id: "3.4",
               title: "Approaches",
               path: "/md3/article?id=3.4",
               prevPath: "/md3/article?id=3.3",
@@ -225,15 +358,13 @@ export const data = {
           icon: Layers,
           subsections: [
             {
-              id: "article",
-              subid: "4.0",
+              id: "4.0",
               title: "Diversions and Alternate Airports",
               path: "/md4/article?id=4.0",
               nextPath: "/md4/article?id=4.1",
             },
             {
-              id: "article",
-              subid: "4.1",
+              id: "4.1",
               title: "Emergency Procedures (Optional)",
               path: "/md4/article?id=4.1",
               prevPath: "/md4/article?id=4.0",
@@ -267,8 +398,7 @@ export const data = {
           icon: Layers,
           subsections: [
             {
-              id: "article",
-              subid: "5.0",
+              id: "5.0",
               title: "General",
               path: "/md5/article?id=5.0",
               nextPath: "/md5/videoplayer",
@@ -301,8 +431,7 @@ export const data = {
           icon: Layers,
           subsections: [
             {
-              id: "article",
-              subid: "6.0",
+              id: "6.0",
               title: "Troubleshooting Basics",
               path: "/md6/article?id=6.0",
               nextPath: "/md6/videoplayer",
@@ -341,18 +470,44 @@ export const data = {
           icon: Layers,
           subsections: [
             {
-              id: "article",
-              subid: "1.0",
+              id: "1.0",
               title: "Overview",
               path: "/md1/article?id=1.0",
               nextPath: "/md1/article?id=1.1",
             },
             {
-              id: "article",
-              subid: "1.1",
+              id: "1.0.1",
+              title: "System Components",
+              path: "/md1/article?id=1.0.1",
+              prevPath: "/md1/article?id=1.0",
+              nextPath: "/md1/article?id=1.0.2",
+            },
+            {
+              id: "1.0.1.1",
+              title: "Hardware Overview",
+              path: "/md1/article?id=1.0.1.1",
+              prevPath: "/md1/article?id=1.0.1",
+              nextPath: "/md1/article?id=1.0.1.2",
+            },
+            {
+              id: "1.0.1.2",
+              title: "Software Architecture",
+              path: "/md1/article?id=1.0.1.2",
+              prevPath: "/md1/article?id=1.0.1.1",
+              nextPath: "/md1/article?id=1.0.2",
+            },
+            {
+              id: "1.0.2",
+              title: "System Integration",
+              path: "/md1/article?id=1.0.2",
+              prevPath: "/md1/article?id=1.0.1.2",
+              nextPath: "/md1/article?id=1.1",
+            },
+            {
+              id: "1.1",
               title: "Components",
               path: "/md1/article?id=1.1",
-              prevPath: "/md1/article?id=1.0",
+              prevPath: "/md1/article?id=1.0.2",
               nextPath: "/md1/videoplayer",
             },
             {
@@ -391,23 +546,20 @@ export const data = {
           icon: Layers,
           subsections: [
             {
-              id: "article",
-              subid: "2.0",
+              id: "2.0",
               title: "INIT/Route Selection Page",
               path: "/md2/article?id=2.0",
               nextPath: "/md2/article?id=2.1",
             },
             {
-              id: "article",
-              subid: "2.1",
+              id: "2.1",
               title: "IRS INIT",
               path: "/md2/article?id=2.1",
               prevPath: "/md2/article?id=2.0",
               nextPath: "/md2/article?id=2.2",
             },
             {
-              id: "article",
-              subid: "2.2",
+              id: "2.2",
               title: "Wind Page functionality",
               path: "/md2/article?id=2.2",
               prevPath: "/md2/article?id=2.1",
@@ -449,8 +601,7 @@ export const data = {
           icon: Layers,
           subsections: [
             {
-              id: "article",
-              subid: "3.0",
+              id: "3.0",
               title: "Lateral Navigation",
               path: "/md3/article?id=3.0",
               // nextPath: "/md4/article?id=3.0",
@@ -491,15 +642,13 @@ export const data = {
           icon: Layers,
           subsections: [
             {
-              id: "article",
-              subid: "4.0",
+              id: "4.0",
               title: "Runway and SID",
               path: "/md4/article?id=4.0",
               nextPath: "/md4/article?id=4.1",
             },
             {
-              id: "article",
-              subid: "4.1",
+              id: "4.1",
               title: "STAR's Selection",
               path: "/md4/article?id=4.1",
               prevPath: "/md4/article?id=4.0",
@@ -541,15 +690,13 @@ export const data = {
           icon: Layers,
           subsections: [
             {
-              id: "article",
-              subid: "5.0",
+              id: "5.0",
               title: "Dep Menu",
               path: "/md5/article?id=5.0",
               nextPath: "/md5/article?id=5.1",
             },
             {
-              id: "article",
-              subid: "5.1",
+              id: "5.1",
               title: "STAR's Selection",
               path: "/md5/article?id=5.1",
               // prevPath:"/md5/article?id=1.0",
@@ -579,28 +726,34 @@ export default function ModuleSidebar({ children }) {
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
   const pathname = usePathname();
-  console.log(pathname);
-  const [filteredData, setFilteredData] = React.useState([]);
+  const courseId=pathname.split("/")[2];
+  //console.log(pathname.split("/"),courseId);
+  // const [filteredData, setFilteredData] = React.useState([]);
+  const [activeId, setActiveId] = React.useState(null);
 
-  const {data,isLoading,isError}=useGetCourses()
+  const {
+    data: courses,
+    isLoading: isCoursesLoading,
+    error: coursesError,
+  } = useGetCourses();
 
-  React.useEffect(() => {
-    const filtered = data.courses.filter((course) =>
-      pathname.includes(course.subpath)
-    );
-    setFilteredData(filtered);
-    console.log(filtered);
-  }, []);
+  const {
+    data: courseDetails,
+    isLoading: isDetailsLoading,
+    error: detailsError,
+  } = useGetCourseDetails(courseId);
 
-  const [isClient, setIsClient] = React.useState(false);
-
-  React.useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  if (!isClient) {
-    return null;
+  
+  if (isCoursesLoading || isDetailsLoading) {
+    return <div>Loading...</div>;
+    // return null;
   }
+  console.log(courseDetails,"courseDetails");
+
+  const filteredCourses=courses.filter((course)=>course.c_id===courseId);
+  const filteredCourseDetails = courseDetails[0].articles.filter((details)=>details.parentId===null || details.parentId===undefined);
+ // console.log(JSON.stringify(filteredCourseDetails),"filteredCourseDetails");
+
 
   return (
     <SidebarProvider>
@@ -623,53 +776,46 @@ export default function ModuleSidebar({ children }) {
           <SidebarGroup>
             <SidebarGroupLabel>Platform</SidebarGroupLabel>
             <SidebarMenu>
-              {filteredData[0].modules.map((module) => (
-                <Collapsible
-                  key={module.id}
-                  asChild
-                  defaultOpen={pathname.split("/")[3] === module.id}
-                  className="group/collapsible"
-                >
-                  <SidebarMenuItem>
-                    <CollapsibleTrigger asChild>
-                      <SidebarMenuButton
-                        tooltip={module.title}
-                        className="h-fit w-full"
-                      >
-                        {module.icon && <module.icon />}
-                        <span className="text-sm font-semibold">
-                          {module.title}
-                        </span>
-                        <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                      </SidebarMenuButton>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent>
-                      <SidebarMenuSub>
-                        {module.subsections.map((subItem, index) => (
-                          <SidebarMenuButton
-                            key={index}
-                            className={`text-sm font-light h-fit rounded-lg px-2 py-1 hover:bg-gray-300 ${
-                              pathname.split("/")[3] === module.id &&
-                              pathname.split("/")[4] === subItem.id &&
-                              (subItem.subid == undefined ||
-                                subItem.subid == searchParams.get("id")) &&
-                              "bg-gray-200"
-                            }`}
-                            onClick={() => {
-                              return redirect(
-                                `${filteredData[0].subpath}/${subItem.path}`
-                              );
-                            }}
-                          >
-                            {subItem.title}
-                          </SidebarMenuButton>
-                        ))}
-                      </SidebarMenuSub>
-                    </CollapsibleContent>
-                  </SidebarMenuItem>
-                </Collapsible>
-              ))}
-            </SidebarMenu>
+  {filteredCourses[0].modules.map((module) => (
+    <Collapsible
+      key={module.id}
+      asChild
+      defaultOpen={pathname.split("/")[3] === module.id}
+      className="group/collapsible"
+    >
+      <div>
+        <CollapsibleTrigger asChild>
+          <SidebarMenuButton
+            tooltip={module.title}
+            className="h-fit w-full"
+          >
+            {module.icon && <module.icon />}
+            <span className="text-sm font-semibold">
+              {module.heading}
+            </span>
+            <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+          </SidebarMenuButton>
+        </CollapsibleTrigger>
+
+        <CollapsibleContent>
+          {filteredCourseDetails.map((coursedetails) => (
+               <NestedSidebar
+                courseDetails={coursedetails}
+                allCourseDetails={courseDetails[0].articles}
+                activeId={id}
+                setActiveId={setActiveId}
+                pathname={pathname}
+                id={id}
+                courseId={courseId}
+                moduleId={module.id}
+              />
+           ))}
+        </CollapsibleContent>
+      </div>
+    </Collapsible>
+  ))}
+</SidebarMenu>
+
           </SidebarGroup>
           <SidebarGroup className="mt-auto">
             <SidebarGroupContent>

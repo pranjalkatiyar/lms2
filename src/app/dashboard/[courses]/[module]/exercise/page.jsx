@@ -2,7 +2,7 @@
 import { usePathname, useSearchParams } from "next/navigation";
 import React from "react";
 import { data as moduleData } from "../sidebar";
-import { articleData } from "../article/page";
+// import { articleData } from "../article/page";
 import { ChevronsUpDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -15,7 +15,7 @@ const Exercise = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const pathArray = pathname.split("/");
-  console.log(pathArray);
+ // console.log(pathArray);
   const filteredModuleData = moduleData.courses.filter((item) =>
     pathname.includes(item.subpath)
   );

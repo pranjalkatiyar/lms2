@@ -77,3 +77,26 @@ export function useDeleteCourse() {
       enabled: !!courseId, // Only fetch when courseId is available
     });
   }
+
+
+  export function useGetQuizQuestions(quizId) {
+    return useQuery({
+      queryKey: ['quiz', quizId],
+      queryFn: async () => {
+        const { data } = await axiosInstance.get(`/course-details/getQuiz/${quizId}`);
+        return data;
+      },
+    });
+  }
+
+  export function useGetQuizResults() {
+    return useMutation({
+      mutationFn: async ({ quizId, answers }) => {
+        const response = await axiosInstance.post('/course-details/quiz/checkAnswer', {
+          quizId,
+          answers,
+        });
+        return response.data;
+      },
+    });
+  }

@@ -266,7 +266,7 @@ export function SidebarLeft({
 }) {
   const logo = data.teams[0].logo
   return (
-    <Sidebar className="border-r-0" {...props}>
+    <Sidebar className="border-r-0" {...props} collapsible="icon">
       <SidebarHeader>
         <SidebarMenuButton className="w-fit px-1.5" onClick={() => redirect('/dashboard')}>
               <Image src={logo} alt="Logo"  width={35} height={35} />

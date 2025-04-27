@@ -1,74 +1,103 @@
-"use client";
+'use client'
+import { useGetCourseDetails, useGetCourses  } from "@/hooks/useCourses";
+import { useSearchParams, useRouter } from "next/navigation";
 import Article from "@/app/components/Article";
-import ModuleSidebar from "../sidebar";
-import { data } from "@/lib/data";
-import { usePathname } from "next/navigation";
-// In a real application, you would fetch this data from an API
-// const articleData = {
-//   title: "Terminology of FMC & MCDU",
-//   subtitle: "",
-//   content: [
-//     {
-//       type: "paragraph",
-//       content:
-//         "Key words and definitions for Performance related pages, common to Boeing, Airbus on Honeywell based system. EX- Zero fuel Weight, cost index, cruise Altitude, Optimum Cruise Altitude, Recommended cruise Altitude.",
-//     },
-//     {
-//       type: "paragraph",
-//       content:
-//         "Boeing FMC always tracks to the waypoint, NG FMC gives user option to create a Pseaudo fix. using Place bearing distance method, legacy Boeing FMC will not allow user to create Pseaudo fix. understanding.Key words and definitions for Performance related pages, common to Boeing, Airbus on Honeywell based system. EX- Zero fuel Weight, cost index, cruise Altitude, Optimum Cruise Altitude, Recommended cruise Altitude.",
-//     },
-//     {
-//       type: "heading",
-//       content: "The Rise of Machine Learning",
-//     },
-//     {
-//       type: "paragraph",
-//       content:
-//         "Machine Learning, a subset of AI, has seen tremendous growth in recent years. It's the driving force behind many of the AI applications we use today, from voice assistants to recommendation systems.",
-//     },
-//     {
-//       type: "image",
-//       content: "/fmc.svg",
-//     },
-//     {
-//       type: "paragraph",
-//       content:
-//         "Here we will learn about the fundamental's of flight management and different features of FMS which are integrated to make entire flight possible from Place A to B. We will learn about Lateral navigation and vertical navigation. We will learn about how Performance inputs are directly linked to vertical navigation. And relationship between Route, legs and Progress page for Lateral Navigation.",
-//     },
-//   ],
-// };
+import React from "react";
+import TestPlayer from "../component/Player";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import FigmaComponent from "../component/Figma";
+import QuizComponent from "@/app/components/Quiz";
 
-export default function Page({ params }) {
-  const module = data.modules.find((m) => m.id === params.module);
-  const subsection = module?.subsections.find(
-    (s) => s.id === params.subsection
-  );
+export default function Page({params}) {
+  const router = useRouter();
+  const searchparams = useSearchParams();
+  const paramsHook = React.use(params);
+  const courseId = paramsHook.courses;
+  const moduleId = paramsHook.module;
+  const id = searchparams.get("id");
+  
+  const {
+    data: courses,
+    isLoading: isCoursesLoading,
+    error: coursesError,
+  } = useGetCourses();
 
-  return <Article article={subsection} />;
+  const {
+    data: courseDetails,
+    isLoading: isDetailsLoading,
+    error: detailsError,
+  } = useGetCourseDetails(courseId);
+
+  if (isCoursesLoading || isDetailsLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (courseDetails && courses) {
+    const moduleArticles = courseDetails[0].articles.filter(article => article.module_id === moduleId);
+    const sortedArticles = moduleArticles.sort((a, b) => {
+      const aParts = a.id.split('.').map(Number);
+      const bParts = b.id.split('.').map(Number);
+      for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
+        const aVal = aParts[i] || 0;
+        const bVal = bParts[i] || 0;
+        if (aVal !== bVal) return aVal - bVal;
+      }
+      return 0;
+    });
+
+    const currentIndex = sortedArticles.findIndex(article => String(article.id) === String(id));
+    const prevArticle = currentIndex > 0 ? sortedArticles[currentIndex - 1] : null;
+    const nextArticle = currentIndex < sortedArticles.length - 1 ? sortedArticles[currentIndex + 1] : null;
+
+    const filteredArticleData = moduleArticles.filter((article) => String(article.id) === String(id));
+    const courseTitle = courses.find((course) => course.c_id === courseId);
+    console.log(filteredArticleData,"filteredArticleData");
+    const handleNavigation = (newId) => {
+      router.push(`/dashboard/${courseId}/${moduleId}/${moduleId}?id=${newId}`);
+    };
+
+    return (
+      <div className="flex flex-1 flex-col px-4 py-8 text-[#344054] pt-0 overflow-hidden w-full">
+        <div className="flex flex-row align-middle items-center mt-5">
+          <SidebarTrigger className="" />
+          <div className="flex justify-between w-full">
+            <h1 className="text-4xl font-bold my-3">{courseTitle?.short_heading}</h1>
+            <div className="mx-12">
+              <div className="flex justify-between">
+                <button
+                  className="mr-0.5 border hover:bg-gray-300 text-black font-bold py-1.5 px-6 rounded-lg disabled:text-gray-300 disabled:hover:bg-white"
+                  disabled={!prevArticle}
+                  onClick={() => handleNavigation(prevArticle?.id)}
+                >
+                  BACK
+                </button>
+                <button
+                  className="ml-0.5 border bg-blue-700 text-white font-bold py-1.5 px-6 rounded-lg"
+                  disabled={!nextArticle}
+                  onClick={() => handleNavigation(nextArticle?.id)}
+                >
+                  NEXT
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <hr className="mb-5" />
+        {(() => {
+          switch (filteredArticleData[0]?.doc_type) {
+            case "article":
+              return <Article article={filteredArticleData[0]} />;
+            case "videoplayer":
+              return <TestPlayer data={filteredArticleData[0]} />;
+            case "playground":
+              return <FigmaComponent data={filteredArticleData[0]} />;
+            case "quiz":
+              return <QuizComponent data={filteredArticleData[0]} />;
+            default:
+              return null;
+          }
+        })()}
+      </div>
+    );
+  }
 }
-
-// import { SidebarLeft } from "@/components/sidebar-left"
-// import { SidebarLeftModule } from "@/components/sidebar-module"
-// import { SidebarRight } from "@/components/sidebar-right"
-// import {
-//   Breadcrumb,
-//   BreadcrumbItem,
-//   BreadcrumbList,
-//   BreadcrumbPage,
-// } from "@/components/ui/breadcrumb"
-// import { Separator } from "@/components/ui/separator"
-// import {
-//   SidebarInset,
-//   SidebarProvider,
-//   SidebarTrigger,
-// } from "@/components/ui/sidebar"
-// import React from 'react'
-// import ModuleSidebar from "../sidebar"
-
-// const Modules = () => {
-//   return (<ModuleSidebar/>
-//   )
-// }
-
-// export default Modules
