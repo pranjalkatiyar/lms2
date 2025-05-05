@@ -96,6 +96,21 @@ export default function Article({ article }) {
                     })}
                   </ul>
                 );
+            case "list2":
+              return(
+                <ul 
+                  key={index} 
+                  className={` ml-6 ${
+                    item.cssClass == null || item.cssClass == undefined 
+                      ? "list-disc" 
+                      : item.cssClass
+                  } space-y-2 mb-3 `}
+                >
+                  {item.list2.map((innerItem) => {
+                    return (<li><strong className={`${innerItem?.cssClass}`}>{innerItem.subheading2}</strong>: { innerItem.content2}</li>); 
+                  })}
+                </ul>
+              )
             default:
               return null;
           }
