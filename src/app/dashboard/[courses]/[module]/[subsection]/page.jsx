@@ -52,7 +52,7 @@ export default function Page({params}) {
     const filteredArticleData = moduleArticles.filter((article) => String(article.id) === String(id));
     const courseTitle = courses.find((course) => course.c_id === courseId);
     console.log(filteredArticleData,"filteredArticleData");
-    const handleNavigation = (newId) => {
+    const handleNavigation = (newId,doc_type) => {
       router.push(`/dashboard/${courseId}/${moduleId}/${moduleId}?id=${newId}`);
     };
 
@@ -67,7 +67,7 @@ export default function Page({params}) {
                 <button
                   className="mr-0.5 border hover:bg-gray-300 text-black font-bold py-1.5 px-6 rounded-lg disabled:text-gray-300 disabled:hover:bg-white"
                   disabled={!prevArticle}
-                  onClick={() => handleNavigation(prevArticle?.id)}
+                  onClick={() => handleNavigation(prevArticle?.id,prevArticle.doc_type)}
                 >
                   BACK
                 </button>
