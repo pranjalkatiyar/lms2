@@ -167,7 +167,7 @@ export default function Page({params}) {
                   COURSE DESCRIPTION
                 </div>
                 <p>
-                  {filteredData[0].description.map((item, index) => {
+                  {filteredData[0].description?.map((item, index) => {
                     return <p className="mb-4" key={index}>{item}</p>;
                   })}
                 </p>
