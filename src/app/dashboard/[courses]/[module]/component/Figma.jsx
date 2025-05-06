@@ -17,6 +17,7 @@ export default function FigmaComponent({data}) {
             src={data.content[0].figmaUrl}
             className="w-full h-full"
             allowFullScreen
+            title="Figma Design"
           />
         </div>
       </main>
