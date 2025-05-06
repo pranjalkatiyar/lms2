@@ -167,7 +167,9 @@ export default function Page({params}) {
                   COURSE DESCRIPTION
                 </div>
                 <p>
-                  {filteredData[0].description}
+                  {filteredData[0].description.map((item, index) => {
+                    return <p className="mb-4" key={index}>{item}</p>;
+                  })}
                 </p>
               </div>
               <div>
@@ -175,13 +177,13 @@ export default function Page({params}) {
                   KEY TOPICS:
                 </div>
                 {filteredData[0].keyTopics.listType === 'ul' ? (
-                  <ul className="ml-3 list-disc">
+                  <ul className="ml-6 list-disc">
                     {filteredData[0].keyTopics.content.map((item, index) => (
                       <li key={index}>{item}</li>
                     ))}
                   </ul>
                 ) : (
-                  <ol className="mt-3">
+                  <ol className="ml-6">
                     {filteredData[0].keyTopics.content.map((item, index) => (
                       <li key={index}>{item}</li>
                     ))}

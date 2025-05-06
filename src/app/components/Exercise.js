@@ -1,7 +1,7 @@
 "use client";
 import { usePathname, useSearchParams } from "next/navigation";
 import React from "react";
-import { data as moduleData } from "../sidebar";
+import { data as moduleData } from "../dashboard/[courses]/[module]/sidebar";
 // import { articleData } from "../article/page";
 import { ChevronsUpDown } from "lucide-react";
 
@@ -11,29 +11,29 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-const Exercise = () => {
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const pathArray = pathname.split("/");
- // console.log(pathArray);
-  const filteredModuleData = moduleData.courses.filter((item) =>
-    pathname.includes(item.subpath)
-  );
-  const module = filteredModuleData[0].modules.find(
-    (item) => item.id == pathArray[3]
-  );
-  const articleSubId = searchParams.get("id");
-  const subsection = module.subsections.find((sub) =>
-    articleSubId ? sub.subid == articleSubId : sub.id === pathArray[4]
-  );
+const Exercise = ({data}) => {
+  // const pathname = usePathname();
+//   const searchParams = useSearchParams();
+//   const pathArray = pathname.split("/");
+//  // console.log(pathArray);
+//   const filteredModuleData = moduleData.courses.filter((item) =>
+//     pathname.includes(item.subpath)
+//   );
+//   const module = filteredModuleData[0].modules.find(
+//     (item) => item.id == pathArray[3]
+//   );
+//   const articleSubId = searchParams.get("id");
+//   const subsection = module.subsections.find((sub) =>
+//     articleSubId ? sub.subid == articleSubId : sub.id === pathArray[4]
+//   );
 
-  const filteredarticleData = articleData.filter((item) =>
-    pathname.includes(item.course_article_subpath)
-  );
+//   const filteredarticleData = articleData.filter((item) =>
+//     pathname.includes(item.course_article_subpath)
+//   );
 
-  const exerciseData = filteredarticleData[0].articles.find(
-    (item) => item.type == "exercise"
-  );
+//   const exerciseData = filteredarticleData[0].articles.find(
+//     (item) => item.type == "exercise"
+//   );
 
   const [isOpen, setIsOpen] = React.useState(false);
 

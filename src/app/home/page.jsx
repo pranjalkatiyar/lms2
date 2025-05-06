@@ -139,7 +139,7 @@ export default function HomePage() {
                             : "bg-gray-100 text-gray-800"
                         }`}
                       >
-                        {course.status?course.status:"Locked"}
+                        {course.status ? course.status:"Locked"}
                       </span>
                     </div>
                     <div className="text-right">
@@ -152,12 +152,12 @@ export default function HomePage() {
                   <div className="space-y-3">
                     <div className="flex justify-between text-sm text-gray-600">
                       <span>
-                        {course.status === "Active"
+                        {course.status === "active"
                           ? "Current Module:"
                           : "First Chapter:"}
                       </span>
-                      <span className="font-medium">
-                        {course.currentModule? course.currentModule : "Locked"}
+                      <span className="font-medium capitalize">
+                        {course.currentModule? course.currentModule : course.status}
                       </span>
                     </div>
                     <div className="w-full bg-gray-100 rounded-full h-3">
@@ -169,15 +169,15 @@ export default function HomePage() {
                     <button
                       onClick={() => handleContinueLearning(course.c_id)}
                       className={`w-full py-3 px-4 rounded-xl text-white font-medium transition-colors duration-200 ${
-                        // course.status === "Active"
-                          // ?
+                         course.status === "active"
+                          ?
                            "bg-blue-600 hover:bg-blue-700 shadow-md hover:shadow-lg"
-                          // : "bg-gray-400 cursor-not-allowed"
-                      }s
+                          : "bg-gray-400 cursor-not-allowed"
+                      }
                           `}
-                      // disabled={course.status !== "Active"}
+                      disabled={course.status !== "active"}
                     >
-                      {course.status !== "Active"
+                      {course.status == "active"
                         ? "Continue Learning"
                         : "Coming Soon"}
                     </button>

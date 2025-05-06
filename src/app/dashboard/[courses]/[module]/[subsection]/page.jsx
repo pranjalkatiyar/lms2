@@ -7,6 +7,7 @@ import TestPlayer from "../component/Player";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import FigmaComponent from "../component/Figma";
 import QuizComponent from "@/app/components/Quiz";
+import Exercise from "@/app/components/Exercise";
 
 export default function Page({params}) {
   const router = useRouter();
@@ -93,6 +94,8 @@ export default function Page({params}) {
               return <FigmaComponent data={filteredArticleData[0]} />;
             case "quiz":
               return <QuizComponent data={filteredArticleData[0]} />;
+            case "exercise":
+              return <Exercise data={filteredArticleData[0]} />;
             default:
               return null;
           }

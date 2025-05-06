@@ -69,6 +69,7 @@ export const NestedSidebar = ({
 }) => {
   const [open, setOpen] = React.useState(false);
   const router = useRouter();
+  console.log(courseId,moduleId,id,"courseId,moduleId");
 
   if(courseDetails.module_id !== moduleId){
     return null;

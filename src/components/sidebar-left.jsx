@@ -268,7 +268,7 @@ export function SidebarLeft({
   return (
     <Sidebar className="border-r-0" {...props} collapsible="icon">
       <SidebarHeader>
-        <SidebarMenuButton className="w-fit px-1.5" onClick={() => redirect('/dashboard')}>
+        <SidebarMenuButton className="w-fit px-1.5" onClick={() => redirect('/home')}>
               <Image src={logo} alt="Logo"  width={35} height={35} />
         </SidebarMenuButton>
         <div className="h-3" />
