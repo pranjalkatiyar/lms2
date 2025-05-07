@@ -12,6 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useGetCourses } from "@/hooks/useCourses";
+import WormLoader from "../components/WormLoader";
 
 // const coursesData = [
 //   {
@@ -60,7 +61,7 @@ export default function HomePage() {
 
   const { data, isLoading, error } = useGetCourses({ limit: 10, page: 1 });
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <div className="flex justify-center items-center h-screen"><WormLoader/></div>;
   if (error) return <div>Error: {error.message}</div>;
 
   // useEffect(() => {
@@ -134,9 +135,9 @@ export default function HomePage() {
                     <div className="flex-1">
                       <h3 className="font-semibold text-lg">{course.short_heading}</h3>
                       <span
-                        className={`text-sm px-2 py-1 rounded-full inline-block mt-1 ${
+                        className={`text-sm px-2 py-1 capitalize rounded-full inline-block mt-1 ${
                           course.status === "Active" ? "bg-green-100 text-green-800"
-                            : "bg-gray-100 text-gray-800"
+                            : "bg-gray-100 text-gray-800 "
                         }`}
                       >
                         {course.status ? course.status:"Locked"}

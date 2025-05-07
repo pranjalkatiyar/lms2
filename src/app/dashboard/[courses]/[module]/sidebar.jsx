@@ -54,6 +54,7 @@ import { cn } from "@/lib/utils";
 import { useSearchParams } from "next/navigation.js";
 import Image from "next/image.js";
 import { useGetCourseDetails, useGetCourses } from "@/hooks/useCourses.js";
+import WormLoader from "@/app/components/WormLoader.js";
 
 
 
@@ -746,8 +747,7 @@ export default function ModuleSidebar({ children }) {
 
   
   if (isCoursesLoading || isDetailsLoading) {
-    return <div>Loading...</div>;
-    // return null;
+  return <div className="flex justify-center items-center h-screen"><WormLoader/></div>;
   }
   console.log(courseDetails,"courseDetails");
 

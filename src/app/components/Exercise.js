@@ -11,6 +11,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import PDF from "./PDFDownloader";
 const Exercise = ({data}) => {
   // const pathname = usePathname();
 //   const searchParams = useSearchParams();
@@ -39,40 +40,10 @@ const Exercise = ({data}) => {
 
   return (
     <div className="flex flex-1 flex-col px-4 py-8 text-[#344054] pt-0 overflow-hidden w-full">
-      <div className="flex flex-row align-middle items-center mt-5">
-        <div className="flex justify-between w-full">
-          <h1 className="text-4xl font-bold my-3">{exerciseData.title}</h1>
-          <div className="mx-12">
-            <div className="flex justify-between">
-              <button
-                className="mr-0.5 border hover:bg-gray-300 text-black font-bold py-1.5 px-6 rounded-lg disabled:text-gray-300 disabled:hover:bg-white"
-                disabled={!subsection.prevPath}
-                onClick={() =>
-                  redirect(
-                    `${filteredModuleData[0].subpath}/${subsection.prevPath}`
-                  )
-                }
-              >
-                BACK
-              </button>
-              <button
-                className="ml-0.5 border bg-blue-700 text-white font-bold py-1.5 px-6 rounded-lg"
-                disabled={!subsection.nextPath}
-                onClick={() =>
-                  redirect(
-                    `${filteredModuleData[0].subpath}/${subsection.nextPath}`
-                  )
-                }
-              >
-                NEXT
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <hr className="mb-5" />
+   
       <div className="flex flex-col space-y-4">
-      {exerciseData.content.map((item, index) => {
+       <PDF/>
+      {/* {exerciseData.content.map((item, index) => {
         return (
           <Collapsible
             open={isOpen === index}
@@ -94,7 +65,7 @@ const Exercise = ({data}) => {
             </CollapsibleContent>
           </Collapsible>
         );
-      })}
+      })} */}
       </div>
     </div>
   );

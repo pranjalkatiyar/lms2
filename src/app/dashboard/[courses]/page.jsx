@@ -17,6 +17,7 @@ import { FileQuestion } from "lucide-react";
 import { useEffect, useState } from "react";
 import { redirect, usePathname } from "next/navigation";
 import { useGetCourses } from "@/hooks/useCourses";
+import WormLoader from "@/app/components/WormLoader";
 
 export default function Page({params}) {
   const [isClient, setIsClient] = useState(false);
@@ -33,9 +34,7 @@ export default function Page({params}) {
   // }
 
   const {data,isLoading,isError} = useGetCourses();
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  if (isLoading) return <div className="flex justify-center items-center h-screen"><WormLoader/></div>;
 
   if (isError) {
     return <div>Error loading data</div>;

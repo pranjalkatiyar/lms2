@@ -8,6 +8,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import FigmaComponent from "../component/Figma";
 import QuizComponent from "@/app/components/Quiz";
 import Exercise from "@/app/components/Exercise";
+import WormLoader from "@/app/components/WormLoader";
 
 export default function Page({params}) {
   const router = useRouter();
@@ -30,9 +31,8 @@ export default function Page({params}) {
   } = useGetCourseDetails(courseId);
 
   if (isCoursesLoading || isDetailsLoading) {
-    return <div>Loading...</div>;
+    return <div className="flex justify-center items-center h-screen"><WormLoader /></div>;
   }
-
   if (courseDetails && courses) {
     const moduleArticles = courseDetails[0].articles.filter(article => article.module_id === moduleId);
     const sortedArticles = moduleArticles.sort((a, b) => {
